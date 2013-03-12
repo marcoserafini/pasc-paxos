@@ -59,9 +59,10 @@ public class PaxosEnsemble {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         String useAnm = "";
-        useAnm = " -a ";
+//        useAnm = " -a ";
 //      String confServerCommon = "-s 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778 -c 127.0.0.1:9000,127.0.0.1:9001,127.0.0.1:9002 -t 1 -b 10 " + useAnm;
-      String confServerCommon = "-s 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778 -c 127.0.0.1:9000 -t 1 -b 10 -m 1024 -k 16 " + useAnm;
+//      String confServerCommon = "-s 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778 -c 127.0.0.1:9000 -t 1 -b 10 -m 1024 -k 16 " + useAnm;
+      String confServerCommon = "-s 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778 -t 1 -b 10 -m 1024 -k 16 " + useAnm;
         String confServer0 = "-i 0 -p 20548 " + confServerCommon;
         String confServer1 = "-i 1 -p 20748 -r " + confServerCommon;
         String confServer2 = "-i 2 -p 20778 " + confServerCommon;

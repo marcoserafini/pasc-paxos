@@ -22,6 +22,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.MessageHandler;
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.handlers.proposer.ProposerRequest;
@@ -33,11 +36,14 @@ import com.yahoo.pasc.paxos.state.IidAcceptorsCounts;
 import com.yahoo.pasc.paxos.state.IidRequest;
 import com.yahoo.pasc.paxos.state.PaxosState;
 
+@Introspect
 public class AcceptorAccept extends PaxosHandler<Accept> {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ProposerRequest.class);
 
     @Override
+    @MessageHandler
     public List<PaxosDescriptor> processMessage(Accept message, PaxosState state) {
         if (state.getIsLeader())
             return null;
@@ -54,20 +60,20 @@ public class AcceptorAccept extends PaxosHandler<Accept> {
 
         if (firstInstanceId <= iid && iid < firstInstanceId + state.getMaxInstances()) {
 
-            ClientTimestamp[] cts = message.getValues();
+            ArrayList<ClientTimestamp> cts = message.getValues();
             byte[][] requests = message.getRequests();
             int arraySize = message.getArraySize();
             int countReceivedRequests = 0;
 
             for (int i = 0; i < arraySize; ++i) {
                 if (requests != null && requests[i] != null) {
-                    state.setReceivedRequest(cts[i], new IidRequest(iid, requests[i]));
+                    state.setReceivedRequest(cts.get(i), new IidRequest(iid, requests[i]));
                     countReceivedRequests++;
                 } else {
-                    IidRequest request = state.getReceivedRequest(cts[i]);
+                    IidRequest request = state.getReceivedRequest(cts.get(i));
                     if (request == null || (request.getIid() != -1 && request.getIid() < firstInstanceId)) {
                         request = new IidRequest(iid);
-                        state.setReceivedRequest(cts[i], request);
+                        state.setReceivedRequest(cts.get(i), request);
                     } else if (request.getRequest() != null && request.getIid() == -1) {
                         request.setIid(iid);
                         countReceivedRequests++;

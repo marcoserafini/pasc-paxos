@@ -16,22 +16,26 @@
 
 package com.yahoo.pasc.paxos.state;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.BitSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.CloneableDeep;
 import com.yahoo.pasc.EqualsDeep;
 
+@Introspect
 public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<DigestStore> {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(DigestStore.class);
 
     private long digestId;
-    private long digests[];
-    private int counts[];
+    private ArrayList<Long> digests;
+    private ArrayList<Integer> counts;
     private boolean haveMine;
     private int size;
     BitSet senders;
@@ -40,8 +44,12 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
     
     public DigestStore(long digestId, int servers) {
         this.digestId = digestId;
-        this.digests = new long[servers];
-        this.counts = new int[servers];
+        this.digests = new ArrayList<Long>(servers);
+        this.counts = new ArrayList<Integer>(servers);
+        while(this.digests.size() < servers){
+        	this.digests.add(null);
+        	this.counts.add(null);
+        }
         this.senders = new BitSet(servers);
         this.size = 0;
         this.recovered = false;
@@ -51,7 +59,7 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
     public void setRecovered(long digest){
         this.recovered = true;
         this.size = 1;
-        this.digests[0] = digest;
+        this.digests.set(0, digest);
     }
 
     public boolean isRecovered (){
@@ -60,7 +68,7 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
 
     public boolean matches(int quorum) {
         if (!haveMine) return false;
-        return counts[0] >= quorum;
+        return counts.get(0) >= quorum;
     }
 
     public void addRemote(int senderId, long digest) {
@@ -68,16 +76,16 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
             senders.set(senderId);
             int i = 0;
             for (; i<size; ++i) {
-                if (digests[i] == digest) {
-                    counts[i]++;
+                if (digests.get(i) == digest) {
+                    counts.set(i, counts.get(i) + 1);
                     return;
                 } else {
-                    LOG.warn("State divergence adding remote. \n Stored: {} \n Received: {}", digests[i], digest);
+                    LOG.warn("State divergence adding remote. \n Stored: {} \n Received: {}", digests.get(i), digest);
                 }
             }
             if (!haveMine) {
-                digests[i] = digest;
-                counts[i] = 1;
+                digests.set(i, digest);
+                counts.set(i, 1);
                 size++;
             }
         }
@@ -89,16 +97,16 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
             haveMine = true;
             int count = 0;
             for (; i<size; ++i) {
-                if (digests[i] == digest) {
-                    count = counts[i];
+                if (digests.get(i) == digest) {
+                    count = counts.get(i);
                     break;
                 } else {
-                    LOG.warn("State divergence adding mine. \n Stored: {} \n Received: {}", digests[i], digest);
+                    LOG.warn("State divergence adding mine. \n Stored: {} \n Received: {}", digests.get(i), digest);
                 }
             }
             size = 1;
-            counts[0] = count + 1;
-            digests[0] = digest;
+            counts.set(0, count + 1);
+            digests.set(0, digest);
         }
     }
     
@@ -108,7 +116,7 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
 
     public long getStableDigest(int quorum){
         if (matches(quorum) || isRecovered()){
-            return digests[0];
+            return digests.get(0);
         } else {
             return -1;
         }
@@ -116,15 +124,15 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
 
     @Override
     public DigestStore cloneDeep() {
-        DigestStore clone = new DigestStore(digestId, digests.length);
+        DigestStore clone = new DigestStore(digestId, digests.size());
         clone.haveMine = this.haveMine;
         clone.size = this.size;
         clone.recovered = this.recovered;
         clone.senders = new BitSet();
         clone.senders.or(senders);
         for (int i = 0; i < size; ++i) {
-            clone.digests[i] = this.digests[i];
-            clone.counts[i] = this.counts[i];
+            clone.digests.add(this.digests.get(i));
+            clone.counts.add(this.counts.get(i));
         }
         return clone;
     }
@@ -137,8 +145,8 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
         if (this.recovered != other.recovered) return false;
         if (!this.senders.equals(other.senders)) return false;
         for (int i = 0; i < this.size; ++i) {
-            if (this.digests[i] != other.digests[i]) return false;
-            if (this.counts[i] != other.counts[i]) return false;
+            if (this.digests.get(i) != other.digests.get(i)) return false;
+            if (this.counts.get(i) != other.counts.get(i)) return false;
         }
         return true;
     }
@@ -146,6 +154,6 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
     @Override
     public String toString() {
         return String.format("{DigestStore id:%d mine:%s recovered:%s size:%d digests:%s counts:%s",
-                digestId, haveMine ? "yes" : "no", recovered ? "yes" : "no", size, Arrays.toString(digests), Arrays.toString(counts));
+                digestId, haveMine ? "yes" : "no", recovered ? "yes" : "no", size, digests, counts);
     }
 }

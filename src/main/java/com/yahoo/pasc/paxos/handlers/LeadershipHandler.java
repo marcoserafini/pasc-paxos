@@ -22,16 +22,22 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.MessageHandler;
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.paxos.messages.Leader;
 import com.yahoo.pasc.paxos.messages.PaxosDescriptor;
 import com.yahoo.pasc.paxos.messages.Prepare;
 import com.yahoo.pasc.paxos.state.PaxosState;
 
+@Introspect
 public class LeadershipHandler extends PaxosHandler<Leader> {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(LeadershipHandler.class);
 
     @Override
+    @MessageHandler
     public List<PaxosDescriptor> processMessage(Leader l, PaxosState state) {
         List<PaxosDescriptor> descriptors = new ArrayList<PaxosDescriptor>();
         LOG.debug("[" + state.getServerId() + "] Current leader " + state.getLeaderId() + " new leader "

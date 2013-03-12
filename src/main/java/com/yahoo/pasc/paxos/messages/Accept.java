@@ -17,6 +17,7 @@
 package com.yahoo.pasc.paxos.messages;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,12 +43,12 @@ public class Accept extends PaxosMessage implements Serializable, CloneableDeep<
         @Override
         public List<PaxosMessage> buildMessages(PaxosState state) {
             InstanceRecord instance = state.getInstancesElement(iid);
-            ClientTimestamp cts[] = instance.getClientTimestamps();
+            ArrayList<ClientTimestamp> cts = instance.getClientTimestamps();
             int threshold = state.getRequestThreshold();
             int size = instance.getArraySize();
             byte[][] requests = null;
             for (int i = 0; i < size; ++i) {
-                IidRequest request = state.getReceivedRequest(cts[i]);
+                IidRequest request = state.getReceivedRequest(cts.get(i));
                 if (request.getRequest().length <= threshold) {
                     if (requests == null) {
                         requests = new byte[size][];
@@ -78,7 +79,7 @@ public class Accept extends PaxosMessage implements Serializable, CloneableDeep<
         this.requests = requests;
     }
 
-    public Accept(int senderId, long iid, int ballot, ClientTimestamp[] values, int arraySize) {
+    public Accept(int senderId, long iid, int ballot, ArrayList<ClientTimestamp> values, int arraySize) {
         super();
         this.senderId = senderId;
         this.instance = new InstanceRecord(iid, ballot, values, arraySize);
@@ -112,11 +113,11 @@ public class Accept extends PaxosMessage implements Serializable, CloneableDeep<
         instance.setIid(iid);
     }
 
-    public ClientTimestamp[] getValues() {
+    public ArrayList<ClientTimestamp> getValues() {
         return instance.getClientTimestamps();
     }
 
-    public void setValues(ClientTimestamp[] values) {
+    public void setValues(ArrayList<ClientTimestamp> values) {
         instance.setClientTimestamps(values);
     }
 
@@ -138,7 +139,7 @@ public class Accept extends PaxosMessage implements Serializable, CloneableDeep<
 
     @Override
     public String toString() {
-        String acceptStr = Arrays.toString(instance.getClientTimestamps());
+        String acceptStr = instance.getClientTimestamps().toString();
         if (acceptStr.length() > 20) {
             acceptStr = acceptStr.substring(0, 20) + " ... ]";
         }

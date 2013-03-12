@@ -23,13 +23,14 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.messages.serialization.BufferPool;
 import com.yahoo.pasc.paxos.messages.serialization.CRC32Pool;
 import com.yahoo.pasc.paxos.messages.serialization.ManualEncoder;
 
 public abstract class PaxosMessage extends Message implements Serializable {
-    @SuppressWarnings("unused")
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(PaxosMessage.class);
 
     private static final long serialVersionUID = 8622528928855536990L;

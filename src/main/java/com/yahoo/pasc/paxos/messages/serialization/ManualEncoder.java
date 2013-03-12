@@ -18,6 +18,9 @@ package com.yahoo.pasc.paxos.messages.serialization;
 
 import static org.jboss.netty.channel.Channels.write;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
@@ -28,6 +31,7 @@ import org.jboss.netty.channel.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.paxos.messages.Accept;
 import com.yahoo.pasc.paxos.messages.Accepted;
 import com.yahoo.pasc.paxos.messages.AsyncMessage;
@@ -48,6 +52,7 @@ import com.yahoo.pasc.paxos.state.InstanceRecord;
 
 public class ManualEncoder implements ChannelDownstreamHandler {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ManualEncoder.class);
 
     public static int[] messages = new int[30];
@@ -174,10 +179,10 @@ public class ManualEncoder implements ChannelDownstreamHandler {
             buffer.writeInt(a.getSenderId());
             buffer.writeInt(a.getBallot());
             buffer.writeLong(a.getIid());
-            ClientTimestamp[] values = a.getValues();
+            ArrayList<ClientTimestamp> values = a.getValues();
             buffer.writeInt(a.getArraySize());
             for (int i = 0; i < a.getArraySize(); i++) {
-                ClientTimestamp value = values[i];
+                ClientTimestamp value = values.get(i);
                 // Request valueRequest = value.getRequest();
                 // System.out.println("Encoding value " + value);
                 buffer.writeInt(value.getClientId());
@@ -265,10 +270,10 @@ public class ManualEncoder implements ChannelDownstreamHandler {
                 buffer.writeLong(currAccepted.getIid());
                 buffer.writeInt(currAccepted.getBallot());
                 buffer.writeInt(currAccepted.getArraySize());
-                ClientTimestamp[] ct = currAccepted.getClientTimestamps();
+                ArrayList<ClientTimestamp> ct = currAccepted.getClientTimestamps();
                 for (int j = 0; j < currAccepted.getArraySize(); j++) {
-                    buffer.writeInt(ct[j].getClientId());
-                    buffer.writeLong(ct[j].getTimestamp());
+                    buffer.writeInt(ct.get(j).getClientId());
+                    buffer.writeLong(ct.get(j).getTimestamp());
                 }
             }
 

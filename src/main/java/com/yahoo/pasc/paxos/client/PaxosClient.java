@@ -83,7 +83,7 @@ public class PaxosClient {
             
             String host         = line.hasOption('l') ? line.getOptionValue('l') : "localhost:20548,localhost:20748,localhost:20778";
             String zkConnection = line.hasOption('z') ? line.getOptionValue('z') : "localhost:2181";
-            int clientIds       = line.hasOption('i') ? Integer.parseInt(line.getOptionValue('i')) : 0;
+//            int clientIds       = line.hasOption('i') ? Integer.parseInt(line.getOptionValue('i')) : 0;
             int servers         = line.hasOption('s') ? Integer.parseInt(line.getOptionValue('s')) : 3;
             int quorum          = line.hasOption('q') ? Integer.parseInt(line.getOptionValue('q')) : 1;
             int buffer          = line.hasOption('b') ? Integer.parseInt(line.getOptionValue('b')) : 1;

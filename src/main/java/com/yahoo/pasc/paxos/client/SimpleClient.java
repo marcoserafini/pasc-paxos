@@ -22,10 +22,12 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.paxos.messages.serialization.PureJavaCrc32;
 
 public class SimpleClient implements ClientInterface {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleClient.class);
     
     private PaxosInterface paxos;

@@ -22,15 +22,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.MessageHandler;
 import com.yahoo.pasc.paxos.client.ClientState;
 import com.yahoo.pasc.paxos.client.Connected;
-import com.yahoo.pasc.paxos.client.PaxosClientHandler;
 import com.yahoo.pasc.paxos.messages.Hello;
 import com.yahoo.pasc.paxos.messages.ServerHello;
 
 public class ServerHelloHandler implements MessageHandler<ServerHello, ClientState, Connected> {
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ServerHelloHandler.class);
 
     @Override

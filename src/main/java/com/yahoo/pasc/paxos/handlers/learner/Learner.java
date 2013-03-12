@@ -22,6 +22,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.MessageHandler;
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.handlers.proposer.ProposerRequest;
@@ -31,11 +34,14 @@ import com.yahoo.pasc.paxos.messages.PaxosDescriptor;
 import com.yahoo.pasc.paxos.state.IidAcceptorsCounts;
 import com.yahoo.pasc.paxos.state.PaxosState;
 
+@Introspect
 public class Learner extends PaxosHandler<Accepted> {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(Learner.class);
 
     @Override
+    @MessageHandler
     public List<PaxosDescriptor> processMessage(Accepted message, PaxosState state) {
         long iid = message.getIid();
         long firstInstanceId = state.getFirstInstanceId();

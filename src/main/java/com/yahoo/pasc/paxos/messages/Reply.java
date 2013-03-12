@@ -24,6 +24,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.CloneableDeep;
 import com.yahoo.pasc.EqualsDeep;
 import com.yahoo.pasc.paxos.state.PaxosState;
@@ -31,13 +32,13 @@ import com.yahoo.pasc.paxos.state.TimestampReply;
 
 public class Reply extends PaxosMessage implements Serializable, CloneableDeep<Reply>, EqualsDeep<Reply> {
 
-    @SuppressWarnings("unused")
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(PaxosMessage.class);
 
     private static final long serialVersionUID = 4929988247614939786L;
 
     public static class Descriptor implements PaxosDescriptor, EqualsDeep<Descriptor> {
-        @SuppressWarnings("unused")
+        @ReadOnly 
         private static final Logger LOG = LoggerFactory.getLogger(Descriptor.class);
 
         private int clientId;

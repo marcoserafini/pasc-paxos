@@ -48,10 +48,10 @@ public class Execute extends PaxosMessage implements Serializable, CloneableDeep
             }
             InstanceRecord instanceRec = state.getInstancesElement(iid);
             if (instanceRec != null) {
-                ClientTimestamp[] cts = instanceRec.getClientTimestamps();
+                ArrayList<ClientTimestamp> cts = instanceRec.getClientTimestamps();
                 int size = instanceRec.getArraySize();
                 for (int i = 0; i < size; ++i) {
-                    ClientTimestamp ct = cts[i];
+                    ClientTimestamp ct = cts.get(i);
                     int clientId = ct.getClientId();
                     long timestamp = ct.getTimestamp();
                     boolean last = i == size - 1;

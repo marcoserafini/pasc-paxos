@@ -1,8 +1,10 @@
 package com.yahoo.pasc.paxos.state;
 
+import com.yahoo.aasc.Introspect;
 import com.yahoo.pasc.CloneableDeep;
 import com.yahoo.pasc.EqualsDeep;
 
+@Introspect
 public class DigestidDigest implements EqualsDeep<DigestidDigest>, CloneableDeep<DigestidDigest>{
 	private int digestId;
 	private long digest;

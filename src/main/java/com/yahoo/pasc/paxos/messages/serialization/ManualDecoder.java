@@ -16,6 +16,7 @@
 
 package com.yahoo.pasc.paxos.messages.serialization;
 
+import java.util.ArrayList;
 import java.util.zip.Checksum;
 
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -25,6 +26,7 @@ import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.PascRuntime;
 import com.yahoo.pasc.paxos.messages.Accept;
 import com.yahoo.pasc.paxos.messages.Accepted;
@@ -49,6 +51,7 @@ import com.yahoo.pasc.paxos.state.InstanceRecord;
 
 public class ManualDecoder extends FrameDecoder {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ManualDecoder.class);
 
     private boolean protection = false;
@@ -117,12 +120,12 @@ public class ManualDecoder extends FrameDecoder {
             int ballot = buf.readInt();
             long iid = buf.readLong();
             len = buf.readInt();
-            ClientTimestamp[] values = new ClientTimestamp[len];
+            ArrayList<ClientTimestamp> values = new ArrayList<ClientTimestamp>(len);
             for (int i = 0; i < len; ++i) {
                 ClientTimestamp value = new ClientTimestamp();
                 value.setClientId(buf.readInt());
                 value.setTimestamp(buf.readLong());
-                values[i] = value;
+                values.add(value);
             }
             byte[][] requests = null;
             int requestsSize = buf.readInt();
@@ -209,11 +212,11 @@ public class ManualDecoder extends FrameDecoder {
                 long iid = buf.readLong();
                 int ballot = buf.readInt();
                 int arraySize = buf.readInt();
-                ClientTimestamp[] ct = new ClientTimestamp[arraySize];
+                ArrayList<ClientTimestamp> ct = new ArrayList<ClientTimestamp>(arraySize);
                 for (int j = 0; j < arraySize; j++) {
                     int clientId = buf.readInt();
                     long timestamp = buf.readLong();
-                    ct[j] = new ClientTimestamp(clientId, timestamp);
+                    ct.add(new ClientTimestamp(clientId, timestamp));
                 }
                 acceptedReqs[i] = new InstanceRecord(iid, ballot, ct, arraySize);
             }

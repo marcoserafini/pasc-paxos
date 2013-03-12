@@ -15,8 +15,11 @@ import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
+
 public class LeaderElection implements Watcher {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(LeaderElection.class);
 
     private ZooKeeper zk;

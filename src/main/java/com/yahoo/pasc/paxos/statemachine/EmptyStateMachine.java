@@ -21,11 +21,13 @@ import java.util.zip.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.paxos.messages.Execute;
 import com.yahoo.pasc.paxos.messages.serialization.PureJavaCrc32;
 
 public class EmptyStateMachine implements StateMachine {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(EmptyStateMachine.class);
 
     private Checksum crc32 = new PureJavaCrc32();

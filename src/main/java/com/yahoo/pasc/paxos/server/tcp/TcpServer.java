@@ -51,6 +51,7 @@ import org.jboss.netty.util.ObjectSizeEstimator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.PascRuntime;
 import com.yahoo.pasc.paxos.Barrier;
@@ -71,7 +72,7 @@ import com.yahoo.pasc.paxos.statemachine.StateMachine;
 
 public class TcpServer implements ServerConnection {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TcpServer.class);
+    @ReadOnly private static final Logger LOG = LoggerFactory.getLogger(TcpServer.class);
 
     private String servers[];
 

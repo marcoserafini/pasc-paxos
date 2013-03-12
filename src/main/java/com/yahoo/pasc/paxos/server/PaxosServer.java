@@ -114,12 +114,20 @@ public class PaxosServer {
             if (batchSize <= 0) {
                 throw new RuntimeException("BatchSize must be greater than 0");
             }
-            
+
+            int checkpointPeriod = 256;
+            if (line.hasOption('k')){
+            	checkpointPeriod = Integer.parseInt(line.getOptionValue('k'));
+            }
+
+            boolean leaderReplies = false;
+            if (line.hasOption('r')){
+            	leaderReplies = true;
+            }
+
             PaxosState state = new PaxosState(maxInstances, batchSize, serverId, quorum, digestQuorum,
-                    serverAddresses.length, congestionWindow, digests);
-            if (line.hasOption('k')) state.setCheckpointPeriod(Integer.parseInt(line.getOptionValue('k')));
-            if (line.hasOption('r')) state.setLeaderReplies(true);
-            state.setRequestThreshold(inlineThreshold);
+                    serverAddresses.length, congestionWindow, digests, inlineThreshold, 
+                    checkpointPeriod, leaderReplies);
 
             if (!protection) {
                 System.out.println("PANM disabled!");

@@ -17,11 +17,13 @@
 package com.yahoo.pasc.paxos.state;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.ArrayList;
 
+import com.yahoo.aasc.Introspect;
 import com.yahoo.pasc.CloneableDeep;
 import com.yahoo.pasc.EqualsDeep;
 
+@Introspect
 public final class InstanceRecord implements Serializable, EqualsDeep<InstanceRecord>, CloneableDeep<InstanceRecord> {
 
     private static final long serialVersionUID = -9144513788670934858L;
@@ -29,16 +31,16 @@ public final class InstanceRecord implements Serializable, EqualsDeep<InstanceRe
     long iid;
     int ballot;
     int arraySize;
-    ClientTimestamp[] clientTimestamps;
+    ArrayList<ClientTimestamp> clientTimestamps;
 
     public InstanceRecord(long iid, int ballot, int bufferSize) {
         this.iid = iid;
         this.ballot = ballot;
-        clientTimestamps = new ClientTimestamp[bufferSize];
+        clientTimestamps = new ArrayList<ClientTimestamp>(bufferSize);
         arraySize = 0;
     }
 
-    public InstanceRecord(long iid, int ballot, ClientTimestamp[] clientTimestamps, int arraySize) {
+    public InstanceRecord(long iid, int ballot, ArrayList<ClientTimestamp> clientTimestamps, int arraySize) {
         this.iid = iid;
         this.ballot = ballot;
         this.clientTimestamps = clientTimestamps;
@@ -61,20 +63,23 @@ public final class InstanceRecord implements Serializable, EqualsDeep<InstanceRe
         this.ballot = ballot;
     }
 
-    public ClientTimestamp[] getClientTimestamps() {
+    public ArrayList<ClientTimestamp> getClientTimestamps() {
         return clientTimestamps;
     }
 
-    public void setClientTimestamps(ClientTimestamp[] cts) {
+    public void setClientTimestamps(ArrayList<ClientTimestamp> cts) {
         clientTimestamps = cts;
     }
 
     public void setClientTimestamp(ClientTimestamp ct, int index) {
-        clientTimestamps[index] = ct;
+    	while(clientTimestamps.size() < index + 1){
+    		clientTimestamps.add(null);
+    	}
+        clientTimestamps.set(index, ct);
     }
 
     public ClientTimestamp getClientTimestamp(int index) {
-        return clientTimestamps[index];
+        return clientTimestamps.get(index);
     }
 
     public int getArraySize() {
@@ -93,13 +98,13 @@ public final class InstanceRecord implements Serializable, EqualsDeep<InstanceRe
     @Override
     public String toString() {
         return String
-                .format("{iid:%d bl:%d sz:%d array:%s}", iid, ballot, arraySize, Arrays.toString(clientTimestamps));
+                .format("{iid:%d bl:%d sz:%d array:%s}", iid, ballot, arraySize, clientTimestamps);
     }
 
     public InstanceRecord cloneDeep() {
-        ClientTimestamp[] resClientTimestamps = new ClientTimestamp[this.clientTimestamps.length];
+        ArrayList<ClientTimestamp> resClientTimestamps = new ArrayList<ClientTimestamp>(this.clientTimestamps.size());
         for (int i = 0; i < this.arraySize; i++) {
-            resClientTimestamps[i] = this.clientTimestamps[i].cloneDeep();
+            resClientTimestamps.add(this.clientTimestamps.get(i).cloneDeep());
         }
         return new InstanceRecord(this.iid, this.ballot, resClientTimestamps, this.arraySize);
     }
@@ -109,7 +114,7 @@ public final class InstanceRecord implements Serializable, EqualsDeep<InstanceRe
             return false;
         }
         for (int i = 0; i < this.arraySize; i++) {
-            if (!this.clientTimestamps[i].equalsDeep(other.clientTimestamps[i])) {
+            if (!this.clientTimestamps.get(i).equalsDeep(other.clientTimestamps.get(i))) {
                 return false;
             }
         }

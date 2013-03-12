@@ -18,9 +18,11 @@ package com.yahoo.pasc.paxos.state;
 
 import java.util.Arrays;
 
+import com.yahoo.aasc.Introspect;
 import com.yahoo.pasc.CloneableDeep;
 import com.yahoo.pasc.EqualsDeep;
 
+@Introspect
 public class IidRequest implements CloneableDeep<IidRequest>, EqualsDeep<IidRequest> {
     long iid;
     byte[] request;

@@ -22,6 +22,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.MessageHandler;
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.handlers.DigestHandler;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
@@ -32,12 +35,15 @@ import com.yahoo.pasc.paxos.messages.Reply;
 import com.yahoo.pasc.paxos.state.PaxosState;
 import com.yahoo.pasc.paxos.state.TimestampReply;
 
+@Introspect
 public class LearnerPreReply extends PaxosHandler<PreReply> {
 
     @SuppressWarnings("unused")
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(LearnerPreReply.class);
 
     @Override
+    @MessageHandler
     public List<PaxosDescriptor> processMessage(PreReply message, PaxosState state) {
         int clientId = message.getClientId();
         long timestamp = message.getTimestamp();

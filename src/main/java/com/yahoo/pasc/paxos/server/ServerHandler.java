@@ -31,6 +31,7 @@ import org.jboss.netty.channel.SimpleChannelHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.PascRuntime;
 import com.yahoo.pasc.paxos.messages.Accept;
@@ -50,6 +51,7 @@ import com.yahoo.pasc.paxos.statemachine.StateMachine;
 
 public class ServerHandler extends SimpleChannelHandler implements LeadershipObserver {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ServerHandler.class);
 
     private PascRuntime<PaxosState> runtime;
@@ -115,7 +117,7 @@ public class ServerHandler extends SimpleChannelHandler implements LeadershipObs
                 return;
             } else if (message instanceof Accept) {
                 accepts++;
-                requests += ((Accept)message).getInstance().getClientTimestamps().length;
+                requests += ((Accept)message).getInstance().getClientTimestamps().size();
             }
             List<Message> responses = runtime.handleMessage(message);
             if (responses == null)

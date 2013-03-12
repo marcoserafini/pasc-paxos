@@ -19,12 +19,14 @@ package com.yahoo.pasc.paxos.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yahoo.aasc.Introspect;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.MessageHandler;
 import com.yahoo.pasc.paxos.messages.PaxosDescriptor;
 import com.yahoo.pasc.paxos.messages.PaxosMessage;
 import com.yahoo.pasc.paxos.state.PaxosState;
 
+@Introspect
 public abstract class PaxosHandler<M extends PaxosMessage> 
     implements MessageHandler<M, PaxosState, PaxosDescriptor> {
 

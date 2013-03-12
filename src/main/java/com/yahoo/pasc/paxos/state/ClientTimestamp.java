@@ -16,9 +16,11 @@
 
 package com.yahoo.pasc.paxos.state;
 
+import com.yahoo.aasc.Introspect;
 import com.yahoo.pasc.CloneableDeep;
 import com.yahoo.pasc.EqualsDeep;
 
+@Introspect
 public class ClientTimestamp implements Comparable<ClientTimestamp>, EqualsDeep<ClientTimestamp>, CloneableDeep<ClientTimestamp> {
     int clientId;
     long timestamp;

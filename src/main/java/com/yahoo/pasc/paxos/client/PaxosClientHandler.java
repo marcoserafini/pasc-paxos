@@ -19,9 +19,7 @@ package com.yahoo.pasc.paxos.client;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -33,9 +31,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
@@ -54,9 +49,9 @@ import org.jboss.netty.handler.execution.ExecutionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.PascRuntime;
-import com.yahoo.pasc.paxos.Barrier;
 import com.yahoo.pasc.paxos.client.messages.Received;
 import com.yahoo.pasc.paxos.client.messages.Submit;
 import com.yahoo.pasc.paxos.client.messages.Timeout;
@@ -72,6 +67,7 @@ import com.yahoo.pasc.paxos.messages.serialization.ManualEncoder;
 
 public class PaxosClientHandler extends SimpleChannelUpstreamHandler implements PaxosInterface {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(PaxosClientHandler.class);
     private static final int MAX_CLIENTS = 4096;
 

@@ -21,17 +21,23 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.messages.Digest;
 import com.yahoo.pasc.paxos.messages.PaxosDescriptor;
 import com.yahoo.pasc.paxos.state.DigestStore;
 import com.yahoo.pasc.paxos.state.PaxosState;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.MessageHandler;
+import com.yahoo.aasc.ReadOnly;
+
+@Introspect
 public class DigestHandler extends PaxosHandler<Digest> {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(DigestHandler.class);
 
     @Override
+    @MessageHandler
     public List<PaxosDescriptor> processMessage(Digest digest, PaxosState state) {
         storeDigest(digest.getSenderId(), digest.getDigestId(), digest.getDigest(), state);
         return null;

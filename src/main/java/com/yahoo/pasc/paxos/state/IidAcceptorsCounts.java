@@ -18,9 +18,11 @@ package com.yahoo.pasc.paxos.state;
 
 import java.io.Serializable;
 
+import com.yahoo.aasc.Introspect;
 import com.yahoo.pasc.CloneableDeep;
 import com.yahoo.pasc.EqualsDeep;
 
+@Introspect
 public final class IidAcceptorsCounts implements Serializable, EqualsDeep<IidAcceptorsCounts>, CloneableDeep<IidAcceptorsCounts> {
 
     private static final long serialVersionUID = 7587497611602103466L;

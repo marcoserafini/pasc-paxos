@@ -22,6 +22,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.MessageHandler;
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.messages.Accept;
@@ -37,11 +40,14 @@ import com.yahoo.pasc.paxos.state.IidRequest;
 import com.yahoo.pasc.paxos.state.InstanceRecord;
 import com.yahoo.pasc.paxos.state.PaxosState;
 
+@Introspect
 public class ProposerPrepared extends PaxosHandler<Prepared> {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ProposerPrepared.class);
 
     @Override
+    @MessageHandler
     public List<PaxosDescriptor> processMessage(Prepared receivedMessage, PaxosState state) {
 
         if (!state.getIsLeader() || state.getBallotProposer() != receivedMessage.getReplyBallot()) {
@@ -73,7 +79,7 @@ public class ProposerPrepared extends PaxosHandler<Prepared> {
             state.setCompletedPhaseOne(true);
 
             // execute recovery
-            Prepared[] messages = state.getPrepared().getPreparedMessages();
+            ArrayList<Prepared> messages = state.getPrepared().getPreparedMessages();
 
             // recover initial checkpoint, if needed
             for (int i = 0; i < servers; i++) {
@@ -92,9 +98,9 @@ public class ProposerPrepared extends PaxosHandler<Prepared> {
                     } else {
                         LOG.trace("Nothing to recover");
                     }
-                } else if (messages[i] != null && messages[i].getMaxForgotten() > maxForgotten) {
-                    maxForgotten = messages[i].getMaxForgotten();
-                    newDigest = messages[i].getCheckpointDigest().cloneDeep();
+                } else if (messages.get(i) != null && messages.get(i).getMaxForgotten() > maxForgotten) {
+                    maxForgotten = messages.get(i).getMaxForgotten();
+                    newDigest = messages.get(i).getCheckpointDigest().cloneDeep();
                     newCheckpoint = true;
                 } else {
 
@@ -148,10 +154,10 @@ public class ProposerPrepared extends PaxosHandler<Prepared> {
                     Prepared currentMessage;
                     if (i == receivedMessage.getSenderId()) {
                         currentMessage = receivedMessage.cloneDeep();
-                    } else if (messages[i] == null) {
+                    } else if (messages.get(i) == null) {
                         continue;
                     } else {
-                        currentMessage = messages[i].cloneDeep();
+                        currentMessage = messages.get(i).cloneDeep();
                     }
                     if (currLearnedPos[i] >= currentMessage.getLearnedReqs().length) {
                         continue;
@@ -186,7 +192,7 @@ public class ProposerPrepared extends PaxosHandler<Prepared> {
                     // Add NOPs from latest currIid sent to currIid
                     for (long iid = lastCurrIid; iid < currIid; ++iid) {
                         LOG.warn("Setting NOP at {}.", iid);
-                        InstanceRecord nopRecord = new InstanceRecord(iid, ballotProposer, new ClientTimestamp[0], 0);
+                        InstanceRecord nopRecord = new InstanceRecord(iid, ballotProposer, new ArrayList<ClientTimestamp>(0), 0);
                         state.setInstancesElement(iid, nopRecord);
                         descriptors.add(new Accept.Descriptor(iid));
                         state.setPendingInstances(pendingRequests + 1);

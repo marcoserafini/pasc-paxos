@@ -23,6 +23,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.yahoo.aasc.Introspect;
+import com.yahoo.aasc.MessageHandler;
+import com.yahoo.aasc.ReadOnly;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.handlers.acceptor.AcceptorAccept;
 import com.yahoo.pasc.paxos.messages.Accept;
@@ -37,11 +40,14 @@ import com.yahoo.pasc.paxos.state.IndexIid;
 import com.yahoo.pasc.paxos.state.InstanceRecord;
 import com.yahoo.pasc.paxos.state.PaxosState;
 
+@Introspect
 public class ProposerRequest extends PaxosHandler<Request> {
 
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ProposerRequest.class);
 
     @Override
+    @MessageHandler
     public List<PaxosDescriptor> processMessage(Request message, PaxosState state) {
         long firstInstanceId = state.getFirstInstanceId();
         int maxInstances = state.getMaxInstances();

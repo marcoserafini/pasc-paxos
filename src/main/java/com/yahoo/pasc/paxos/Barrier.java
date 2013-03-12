@@ -29,9 +29,10 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yahoo.pasc.paxos.client.PaxosClientHandler;
+import com.yahoo.aasc.ReadOnly;
 
 public class Barrier implements Watcher {
+    @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(Barrier.class);
 
     private int size;
