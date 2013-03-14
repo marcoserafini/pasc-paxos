@@ -147,7 +147,7 @@
   		<artifactId>slf4j-log4j12</artifactId>
   		<version>1.6.2</version>
   		<type>jar</type>
-  		<scope>runtime</scope>
+  		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.slf4j</groupId>

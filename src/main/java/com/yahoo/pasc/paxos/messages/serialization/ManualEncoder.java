@@ -79,7 +79,7 @@ public class ManualEncoder implements ChannelDownstreamHandler {
         ChannelFuture future = e.getFuture();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Encoded message with bytes {} ", ChannelBuffers.copiedBuffer(encodedMessage).array());
+            LOG.trace("Encoded message with bytes {} ", ChannelBuffers.copiedBuffer(encodedMessage));
         }
 
         write(ctx, future, encodedMessage, e.getRemoteAddress());
