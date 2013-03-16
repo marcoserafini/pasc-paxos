@@ -34,6 +34,7 @@ public abstract class PaxosMessage extends Message implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(PaxosMessage.class);
 
     private static final long serialVersionUID = 8622528928855536990L;
+    @ReadOnly
     private static ManualEncoder encoder = new ManualEncoder();
 
 //    private ThreadLocal<BufferPool> pool = new ThreadLocal<BufferPool>() {

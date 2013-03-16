@@ -45,10 +45,14 @@ public class ProposerRequest extends PaxosHandler<Request> {
 
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ProposerRequest.class);
+    
+    public ProposerRequest (PaxosState state){
+    	super(state);
+    }
 
     @Override
     @MessageHandler
-    public List<PaxosDescriptor> processMessage(Request message, PaxosState state) {
+    public List<PaxosDescriptor> processMessage(Request message) {
         long firstInstanceId = state.getFirstInstanceId();
         int maxInstances = state.getMaxInstances();
 

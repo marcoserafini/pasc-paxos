@@ -30,9 +30,15 @@ import com.yahoo.pasc.paxos.client.Connected;
 import com.yahoo.pasc.paxos.messages.Hello;
 import com.yahoo.pasc.paxos.messages.ServerHello;
 
-public class ServerHelloHandler implements MessageHandler<ServerHello, ClientState, Connected> {
+public class ServerHelloHandler implements MessageHandler<ServerHello, Connected> {
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ServerHelloHandler.class);
+    
+    private ClientState state;
+    
+    public ServerHelloHandler (ClientState state){
+    	this.state = state;
+    }
 
     @Override
     public boolean guardPredicate(ServerHello receivedMessage) {
@@ -40,7 +46,7 @@ public class ServerHelloHandler implements MessageHandler<ServerHello, ClientSta
     }
 
     @Override
-    public List<Connected> processMessage(ServerHello hello, ClientState state) {
+    public List<Connected> processMessage(ServerHello hello) {
         List<Connected> descriptors = null;
         if (!matches(hello, state)) {
             return null;
@@ -65,7 +71,7 @@ public class ServerHelloHandler implements MessageHandler<ServerHello, ClientSta
     }
 
     @Override
-    public List<Message> getOutputMessages(ClientState state, List<Connected> descriptors) {
+    public List<Message> getOutputMessages(List<Connected> descriptors) {
         if (descriptors != null && descriptors.size() > 0) {
             return Arrays.<Message> asList(new Connected());
         }

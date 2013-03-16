@@ -35,10 +35,14 @@ public class DigestHandler extends PaxosHandler<Digest> {
 
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(DigestHandler.class);
+    
+    public DigestHandler(PaxosState state){
+    	super(state);
+    }
 
     @Override
     @MessageHandler
-    public List<PaxosDescriptor> processMessage(Digest digest, PaxosState state) {
+    public List<PaxosDescriptor> processMessage(Digest digest) {
         storeDigest(digest.getSenderId(), digest.getDigestId(), digest.getDigest(), state);
         return null;
     }

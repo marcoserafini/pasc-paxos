@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.aasc.Introspect;
 import com.yahoo.aasc.MessageHandler;
 import com.yahoo.aasc.ReadOnly;
-import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
-import com.yahoo.pasc.paxos.handlers.learner.Learner;
 import com.yahoo.pasc.paxos.messages.PaxosDescriptor;
 import com.yahoo.pasc.paxos.messages.Prepare;
 import com.yahoo.pasc.paxos.messages.Prepared;
@@ -42,10 +40,14 @@ public class AcceptorPrepare extends PaxosHandler<Prepare> {
 
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(AcceptorPrepare.class);
+    
+    public AcceptorPrepare (PaxosState state){
+    	super(state);
+    }
 
     @Override
     @MessageHandler
-    public List<PaxosDescriptor> processMessage(Prepare message, PaxosState state) {
+    public List<PaxosDescriptor> processMessage(Prepare message) {
 
         // check that the leader is newer than the last one by looking at the ballot number
         int currentBallot = state.getBallotAcceptor();

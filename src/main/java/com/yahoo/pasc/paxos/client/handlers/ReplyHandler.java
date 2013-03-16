@@ -30,10 +30,16 @@ import com.yahoo.pasc.paxos.client.ReplyStore;
 import com.yahoo.pasc.paxos.client.messages.Received;
 import com.yahoo.pasc.paxos.messages.Reply;
 
-public class ReplyHandler implements MessageHandler<Reply, ClientState, Received.Descriptor> {
+public class ReplyHandler implements MessageHandler<Reply, Received.Descriptor> {
     
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(ReplyHandler.class);
+
+    private ClientState state;
+    
+    public ReplyHandler (ClientState state){
+    	this.state = state;
+    }
 
     @Override
     public boolean guardPredicate(Reply receivedMessage) {
@@ -41,7 +47,7 @@ public class ReplyHandler implements MessageHandler<Reply, ClientState, Received
     }
 
     @Override
-    public List<Received.Descriptor> processMessage(Reply reply, ClientState state) {
+    public List<Received.Descriptor> processMessage(Reply reply) {
         List<Received.Descriptor> descriptors = null;
         if (matches(reply, state)) {
             ReplyStore store = state.getReplyStore();
@@ -60,7 +66,7 @@ public class ReplyHandler implements MessageHandler<Reply, ClientState, Received
     }
 
     @Override
-    public List<Message> getOutputMessages(ClientState state, List<Received.Descriptor> descriptors) {
+    public List<Message> getOutputMessages(List<Received.Descriptor> descriptors) {
         if (descriptors != null && descriptors.size() > 0) {
             return Arrays.<Message> asList(new Received(descriptors.get(0).getValue()));
         }

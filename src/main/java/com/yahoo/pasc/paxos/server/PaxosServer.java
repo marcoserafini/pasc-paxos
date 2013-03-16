@@ -135,15 +135,15 @@ public class PaxosServer {
             
             final PascRuntime<PaxosState> runtime = new PascRuntime<PaxosState>(protection);
             runtime.setState(state);
-            runtime.addHandler(Accept.class, new AcceptorAccept());
-            runtime.addHandler(Prepare.class, new AcceptorPrepare());
-            runtime.addHandler(Accepted.class, new Learner());
-            runtime.addHandler(Prepared.class, new ProposerPrepared());
-            runtime.addHandler(Request.class, new ProposerRequest());
-            runtime.addHandler(InlineRequest.class, new ProposerRequest());
-            runtime.addHandler(Digest.class, new DigestHandler());
-            runtime.addHandler(PreReply.class, new LearnerPreReply());
-            runtime.addHandler(Leader.class, new LeadershipHandler());
+            runtime.addHandler(Accept.class, new AcceptorAccept(state));
+            runtime.addHandler(Prepare.class, new AcceptorPrepare(state));
+            runtime.addHandler(Accepted.class, new Learner(state));
+            runtime.addHandler(Prepared.class, new ProposerPrepared(state));
+            runtime.addHandler(Request.class, new ProposerRequest(state));
+            runtime.addHandler(InlineRequest.class, new ProposerRequest(state));
+            runtime.addHandler(Digest.class, new DigestHandler(state));
+            runtime.addHandler(PreReply.class, new LearnerPreReply(state));
+            runtime.addHandler(Leader.class, new LeadershipHandler(state));
 
             if (udp) {
                 new UdpServer(runtime, serverAddresses, null, port, threads, serverId).run();

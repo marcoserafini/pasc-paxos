@@ -25,15 +25,21 @@ import com.yahoo.pasc.paxos.client.ClientState;
 import com.yahoo.pasc.paxos.client.messages.Timeout;
 import com.yahoo.pasc.paxos.messages.Request;
 
-public class TimeoutHandler implements MessageHandler<Timeout, ClientState, Request> {
+public class TimeoutHandler implements MessageHandler<Timeout, Request> {
 
+	private ClientState state;
+	
+	public TimeoutHandler (ClientState state){
+		this.state = state;
+	}
+	
     @Override
     public boolean guardPredicate(Timeout receivedMessage) {
         return true;
     }
 
     @Override
-    public List<Request> processMessage(Timeout timeout, ClientState state) {
+    public List<Request> processMessage(Timeout timeout) {
         if (timeout.getTimestamp() == state.getTimestamp()) {
             Request pendingRequest = state.getPendingRequest();
             return Arrays.asList(new Request(pendingRequest.getClientId(), pendingRequest.getTimestamp(), pendingRequest.getRequest()));
@@ -42,7 +48,7 @@ public class TimeoutHandler implements MessageHandler<Timeout, ClientState, Requ
     }
 
     @Override
-    public List<Message> getOutputMessages(ClientState state, List<Request> messages) {
+    public List<Message> getOutputMessages(List<Request> messages) {
         if (messages != null && messages.size() > 0) {
             return Arrays.<Message>asList(messages.get(0));
         }

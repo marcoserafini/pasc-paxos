@@ -31,18 +31,24 @@ import com.yahoo.pasc.paxos.client.TimestampMessage;
 import com.yahoo.pasc.paxos.client.messages.Received;
 import com.yahoo.pasc.paxos.messages.AsyncMessage;
 
-public class AsyncMessageHandler implements MessageHandler<AsyncMessage, ClientState, Received.Descriptor> {
+public class AsyncMessageHandler implements MessageHandler<AsyncMessage, Received.Descriptor> {
     
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(AsyncMessageHandler.class);
 
+	private ClientState state;
+	
+	public AsyncMessageHandler (ClientState state){
+		this.state = state;
+	}
+	
     @Override
     public boolean guardPredicate(AsyncMessage receivedMessage) {
         return true;
     }
 
     @Override
-    public List<Received.Descriptor> processMessage(AsyncMessage asyncMessage, ClientState state) {
+    public List<Received.Descriptor> processMessage(AsyncMessage asyncMessage) {
         List<Received.Descriptor> descriptors = null;
         if (matches(asyncMessage, state)) {
             TimestampMessage tm = state.getAsyncMessage(asyncMessage.getTimestamp());
@@ -65,7 +71,7 @@ public class AsyncMessageHandler implements MessageHandler<AsyncMessage, ClientS
     }
 
     @Override
-    public List<Message> getOutputMessages(ClientState state, List<Received.Descriptor> descriptors) {
+    public List<Message> getOutputMessages(List<Received.Descriptor> descriptors) {
         if (descriptors != null && descriptors.size() > 0) {
             return Arrays.<Message> asList(new Received(descriptors.get(0).getValue()));
         }

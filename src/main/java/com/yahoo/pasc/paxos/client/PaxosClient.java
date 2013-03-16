@@ -100,27 +100,27 @@ public class PaxosClient {
 
             String [] serverHosts = host.split(",");
             
-            ServerHelloHandler shello = new ServerHelloHandler();
-            ReplyHandler reply = new ReplyHandler();
-            SubmitHandler submit = new SubmitHandler();
-            TimeoutHandler tout = new TimeoutHandler();
-            AsyncMessageHandler asyncm = new AsyncMessageHandler();
-            ByeHandler bye = new ByeHandler();
-            HelloHandler hello = new HelloHandler();
-            
+//            ServerHelloHandler shello = new ServerHelloHandler();
+//            ReplyHandler reply = new ReplyHandler();
+//            SubmitHandler submit = new SubmitHandler();
+//            TimeoutHandler tout = new TimeoutHandler();
+//            AsyncMessageHandler asyncm = new AsyncMessageHandler();
+//            ByeHandler bye = new ByeHandler();
+//            HelloHandler hello = new HelloHandler();
+//            
             Random rnd = new Random();
             
             for (int i = 0; i < buffer; ++ i) {
                 ClientState clientState = new ClientState(servers, quorum, inlineThreshold, asynSize);
                 final PascRuntime<ClientState> runtime = new PascRuntime<ClientState>(protection);
                 runtime.setState(clientState);
-                runtime.addHandler(ServerHello.class, shello);
-                runtime.addHandler(Reply.class, reply);
-                runtime.addHandler(Submit.class, submit);
-                runtime.addHandler(Timeout.class, tout);
-                runtime.addHandler(AsyncMessage.class, asyncm);
-                runtime.addHandler(Bye.class, bye);
-                runtime.addHandler(Hello.class, hello);
+                runtime.addHandler(ServerHello.class, new ServerHelloHandler(clientState));
+                runtime.addHandler(Reply.class, new ReplyHandler(clientState));
+                runtime.addHandler(Submit.class, new SubmitHandler(clientState));
+                runtime.addHandler(Timeout.class, new TimeoutHandler(clientState));
+                runtime.addHandler(AsyncMessage.class, new AsyncMessageHandler(clientState));
+                runtime.addHandler(Bye.class, new ByeHandler(clientState));
+                runtime.addHandler(Hello.class, new HelloHandler(clientState));
                 
                 final PaxosClientHandler handler = new PaxosClientHandler(runtime, new SimpleClient(requestSize), 
                         serverHosts, clients, timeout, zkConnection, executor);

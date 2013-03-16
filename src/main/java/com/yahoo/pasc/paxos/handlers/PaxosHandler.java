@@ -28,7 +28,13 @@ import com.yahoo.pasc.paxos.state.PaxosState;
 
 @Introspect
 public abstract class PaxosHandler<M extends PaxosMessage> 
-    implements MessageHandler<M, PaxosState, PaxosDescriptor> {
+    implements MessageHandler<M, PaxosDescriptor> {
+	
+    protected PaxosState state;
+    
+    public PaxosHandler(PaxosState state){
+    	this.state = state;
+    }
 
     @Override
     public boolean guardPredicate(M receivedMessage) {
@@ -36,7 +42,7 @@ public abstract class PaxosHandler<M extends PaxosMessage>
     };
 
     @Override
-    public List<Message> getOutputMessages(PaxosState state, List<PaxosDescriptor> descriptors) {
+    public List<Message> getOutputMessages(List<PaxosDescriptor> descriptors) {
         if (descriptors == null) 
             return null;
 

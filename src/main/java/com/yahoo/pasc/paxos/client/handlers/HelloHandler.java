@@ -24,7 +24,14 @@ import com.yahoo.pasc.MessageHandler;
 import com.yahoo.pasc.paxos.client.ClientState;
 import com.yahoo.pasc.paxos.messages.Hello;
 
-public class HelloHandler implements MessageHandler<Hello, ClientState, Hello> {
+public class HelloHandler implements MessageHandler<Hello, Hello> {
+
+	private ClientState state;
+	
+	public HelloHandler (ClientState state){
+		this.state = state;
+	}
+	
 
     @Override
     public boolean guardPredicate(Hello receivedMessage) {
@@ -32,7 +39,7 @@ public class HelloHandler implements MessageHandler<Hello, ClientState, Hello> {
     }
 
     @Override
-    public List<Hello> processMessage(Hello hello, ClientState state) {
+    public List<Hello> processMessage(Hello hello) {
         state.setPendingHello(hello);
         state.setConnected(0);
         state.setDisconnected(0);
@@ -40,7 +47,7 @@ public class HelloHandler implements MessageHandler<Hello, ClientState, Hello> {
     }
 
     @Override
-    public List<Message> getOutputMessages(ClientState state, List<Hello> messages) {
+    public List<Message> getOutputMessages(List<Hello> messages) {
         return Arrays.<Message>asList(messages.get(0));
     }
 }

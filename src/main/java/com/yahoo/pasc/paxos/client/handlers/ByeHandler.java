@@ -26,15 +26,21 @@ import com.yahoo.pasc.paxos.client.Reconnect;
 import com.yahoo.pasc.paxos.messages.Bye;
 import com.yahoo.pasc.paxos.messages.Hello;
 
-public class ByeHandler implements MessageHandler<Bye, ClientState, Reconnect> {
+public class ByeHandler implements MessageHandler<Bye, Reconnect> {
 
+	private ClientState state;
+	
+	public ByeHandler (ClientState state){
+		this.state = state;
+	}
+	
     @Override
     public boolean guardPredicate(Bye receivedMessage) {
         return true;
     }
 
     @Override
-    public List<Reconnect> processMessage(Bye bye, ClientState state) {
+    public List<Reconnect> processMessage(Bye bye) {
         List<Reconnect> descriptors = null;
         if (!matches(bye, state)) {
             return null;
@@ -58,7 +64,7 @@ public class ByeHandler implements MessageHandler<Bye, ClientState, Reconnect> {
     }
 
     @Override
-    public List<Message> getOutputMessages(ClientState state, List<Reconnect> descriptors) {
+    public List<Message> getOutputMessages(List<Reconnect> descriptors) {
         if (descriptors != null && descriptors.size() > 0) {
             return Arrays.<Message> asList(new Reconnect());
         }

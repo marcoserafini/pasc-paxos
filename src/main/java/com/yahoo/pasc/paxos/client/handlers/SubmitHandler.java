@@ -27,15 +27,21 @@ import com.yahoo.pasc.paxos.client.messages.Submit;
 import com.yahoo.pasc.paxos.messages.InlineRequest;
 import com.yahoo.pasc.paxos.messages.Request;
 
-public class SubmitHandler implements MessageHandler<Submit, ClientState, Request> {
+public class SubmitHandler implements MessageHandler<Submit, Request> {
 
+	private ClientState state;
+	
+	public SubmitHandler (ClientState state){
+		this.state = state;
+	}
+	
     @Override
     public boolean guardPredicate(Submit receivedMessage) {
         return true;
     }
 
     @Override
-    public List<Request> processMessage(Submit submit, ClientState state) {
+    public List<Request> processMessage(Submit submit) {
         long timestamp = state.getTimestamp();
         timestamp++;
         Request request;
@@ -51,7 +57,7 @@ public class SubmitHandler implements MessageHandler<Submit, ClientState, Reques
     }
 
     @Override
-    public List<Message> getOutputMessages(ClientState state, List<Request> messages) {
+    public List<Message> getOutputMessages(List<Request> messages) {
         return Arrays.<Message>asList(messages.get(0));
     }
 }

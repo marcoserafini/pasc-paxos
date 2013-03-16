@@ -17,7 +17,6 @@
 package com.yahoo.pasc.paxos.state;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,7 @@ import com.yahoo.pasc.ProcessState;
 @Introspect
 public class PaxosState implements ProcessState {
 
-    @SuppressWarnings("unused")
+//    @SuppressWarnings("unused")
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(PaxosState.class);
 

@@ -35,10 +35,14 @@ public class LeadershipHandler extends PaxosHandler<Leader> {
 
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(LeadershipHandler.class);
+    
+    public LeadershipHandler (PaxosState state){
+    	super(state);
+    }
 
     @Override
     @MessageHandler
-    public List<PaxosDescriptor> processMessage(Leader l, PaxosState state) {
+    public List<PaxosDescriptor> processMessage(Leader l) {
         List<PaxosDescriptor> descriptors = new ArrayList<PaxosDescriptor>();
         LOG.debug("[" + state.getServerId() + "] Current leader " + state.getLeaderId() + " new leader "
                 + l.getLeader());
