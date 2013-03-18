@@ -38,7 +38,7 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
     private ArrayList<Integer> counts;
     private boolean haveMine;
     private int size;
-    BitSet senders;
+    ArrayList<Boolean> senders;
     
     private boolean recovered;
     
@@ -50,7 +50,8 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
         	this.digests.add(null);
         	this.counts.add(null);
         }
-        this.senders = new BitSet(servers);
+        this.senders = new ArrayList<Boolean>(servers);
+        while(senders.size() < servers){ senders.add(false);}
         this.size = 0;
         this.recovered = false;
         this.haveMine = false;
@@ -73,7 +74,7 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
 
     public void addRemote(int senderId, long digest) {
         if (! isRecovered() && ! senders.get(senderId)){
-            senders.set(senderId);
+            senders.set(senderId, true);
             int i = 0;
             for (; i<size; ++i) {
                 if (digests.get(i) == digest) {
@@ -128,8 +129,10 @@ public class DigestStore implements CloneableDeep<DigestStore>, EqualsDeep<Diges
         clone.haveMine = this.haveMine;
         clone.size = this.size;
         clone.recovered = this.recovered;
-        clone.senders = new BitSet();
-        clone.senders.or(senders);
+        clone.senders = new ArrayList<Boolean>(this.senders.size());
+        for (int i = 0; i < this.senders.size(); ++i){
+        	clone.senders.add(this.senders.get(i));
+        }
         for (int i = 0; i < size; ++i) {
             clone.digests.add(this.digests.get(i));
             clone.counts.add(this.counts.get(i));
