@@ -92,7 +92,7 @@ public class PaxosClient {
             int requestSize     = line.hasOption('r') ? Integer.parseInt(line.getOptionValue('r')) : 0;
             int inlineThreshold = line.hasOption('n') ? Integer.parseInt(line.getOptionValue('n')) : 1000;
             int asynSize        = line.hasOption('y') ? Integer.parseInt(line.getOptionValue('y')) : 100;
-            boolean protection  = line.hasOption('a');
+//            boolean protection  = line.hasOption('a');
 
             int threads = Runtime.getRuntime().availableProcessors() * 2;
             final ExecutionHandler executor = new ExecutionHandler(new OrderedMemoryAwareThreadPoolExecutor(threads, 1024 * 1024,
@@ -112,7 +112,7 @@ public class PaxosClient {
             
             for (int i = 0; i < buffer; ++ i) {
                 ClientState clientState = new ClientState(servers, quorum, inlineThreshold, asynSize);
-                final PascRuntime<ClientState> runtime = new PascRuntime<ClientState>(protection);
+                final PascRuntime<ClientState> runtime = new PascRuntime<ClientState>(false);
                 runtime.setState(clientState);
                 runtime.addHandler(ServerHello.class, new ServerHelloHandler(clientState));
                 runtime.addHandler(Reply.class, new ReplyHandler(clientState));

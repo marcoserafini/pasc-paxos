@@ -26,6 +26,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
+import com.yahoo.aasc.AASCUtils;
+import com.yahoo.aasc.ReferenceTracker;
 import com.yahoo.pasc.PascRuntime;
 import com.yahoo.pasc.paxos.handlers.DigestHandler;
 import com.yahoo.pasc.paxos.handlers.LeadershipHandler;
@@ -70,7 +72,7 @@ public class PaxosServer {
 //            Option clients      = new Option("c", true, "clients (hostname:port,...)");
             Option servers      = new Option("s", true, "servers (hostname:port,...)");
             Option maxInstances = new Option("m", true, "max number of instances");
-            Option anm          = new Option("a", false, "protection against ANM faults");
+            Option asc          = new Option("a", false, "protection against ASC faults");
             Option udp          = new Option("u", false, "use UDP");
             Option cWindow      = new Option("w", true, "congestion window");
             Option threads      = new Option("t", true, "number of threads");
@@ -81,12 +83,14 @@ public class PaxosServer {
             Option digestQuorum = new Option("q", true, "digest quorum");
             Option leaderReplies= new Option("r", false, "leader replies");
             Option zookeeper    = new Option("z", true, "zookeeper connection string");
+            Option locking		= new Option("l", false, "Turn on transactional support for Threads with shared state");
+            Option optimized	= new Option("o", false, "Turn on optimizations");
             
             options = new Options();
             options.addOption(id).addOption(port).addOption(buffer).addOption(servers)
-                    .addOption(threads).addOption(anm).addOption(udp).addOption(maxInstances) //.addOption(leader)
+                    .addOption(threads).addOption(asc).addOption(udp).addOption(maxInstances) //.addOption(leader)
                     .addOption(cWindow).addOption(digests).addOption(ckPeriod).addOption(inlineThresh)
-                    .addOption(twoStages).addOption(digestQuorum).addOption(leaderReplies).addOption(zookeeper);
+                    .addOption(twoStages).addOption(digestQuorum).addOption(leaderReplies).addOption(zookeeper).addOption(locking).addOption(optimized);
         }
         
         CommandLine line = null;
@@ -110,6 +114,8 @@ public class PaxosServer {
             int digestQuorum         = line.hasOption('q') ? Integer.parseInt(line.getOptionValue('q')) : quorum;
             int threads              = line.hasOption('t') ? Integer.parseInt(line.getOptionValue('t')) :
                 Runtime.getRuntime().availableProcessors() * 2 + 1;
+            boolean locking 		 = line.hasOption('l') ? true : false;
+            boolean optimized 		 = line.hasOption('o') ? true : false;
             
             if (batchSize <= 0) {
                 throw new RuntimeException("BatchSize must be greater than 0");
@@ -130,10 +136,30 @@ public class PaxosServer {
                     checkpointPeriod, leaderReplies);
 
             if (!protection) {
-                System.out.println("PANM disabled!");
+                System.out.println("AASC disabled!");
             }
+            else{
+            	System.out.println("AASC enabled!");
+            }
+            AASCUtils.activated = protection;
             
-            final PascRuntime<PaxosState> runtime = new PascRuntime<PaxosState>(protection);
+            if (!locking){
+            	System.out.println("Transactional support disabled");
+            }
+            else{
+            	System.out.println("Transactional support enabled");
+            }
+            ReferenceTracker.locking = locking;
+            
+            if(!optimized){
+            	System.out.println("Optimizations for collections disabled");
+            }
+            else{
+            	System.out.println("Optimizations for collections enabled");
+            }
+            AASCUtils.optimized = optimized;
+            
+            final PascRuntime<PaxosState> runtime = new PascRuntime<PaxosState>(false);
             runtime.setState(state);
             runtime.addHandler(Accept.class, new AcceptorAccept(state));
             runtime.addHandler(Prepare.class, new AcceptorPrepare(state));

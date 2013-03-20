@@ -18,6 +18,7 @@ package com.yahoo.pasc.paxos;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.slf4j.Logger;
@@ -77,8 +78,9 @@ public class PaxosEnsemble {
         String confClient = "-i 0 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -c 1 -r 10  -w 1000000" + useAnm;
 //        String confClient2 = "-i 1 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -p 9001 -c 3 " + useAnm;
 //        String confClient3 = "-i 2 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -p 9002 -c 3 " + useAnm;
-
+        
         if (args.length == 0) {
+            
             startZK();
 
             executeServer("leader", confServer0);
@@ -93,11 +95,50 @@ public class PaxosEnsemble {
 //        executeClient("client2", confClient2);
 //        executeClient("client3", confClient3);
         } else {
-            if (args[0].equals("zk")) startZK();
-            if (args[0].equals("0")) executeServer("rep0", confServer0);
-            if (args[0].equals("1")) executeServer("rep1", confServer1);
-            if (args[0].equals("2")) executeServer("rep2", confServer2);
-            if (args[0].equals("c")) executeClient("client", confClient);
+            HashSet<String> params = new HashSet<String>();
+            
+            for (int i = 0; i < args.length; i++){
+            	params.add(args[i]);
+            }
+            
+            if (params.contains("aasc")){
+            	confServer0 = confServer0.concat(" -a");
+            	confServer1 = confServer1.concat(" -a");
+            	confServer2 = confServer2.concat(" -a");
+            }
+            if (params.contains("lock")){
+            	confServer0 = confServer0.concat(" -l");
+            	confServer1 = confServer1.concat(" -l");
+            	confServer2 = confServer2.concat(" -l");            	
+            }
+            if (params.contains("optim")){
+            	confServer0 = confServer0.concat(" -o");
+            	confServer1 = confServer1.concat(" -o");
+            	confServer2 = confServer2.concat(" -o");            	            	
+            }
+            
+            System.out.println("Configuration server 0 " + confServer0);
+            
+            if (params.contains("distr")){	        	
+	            if (args[0].equals("zk")) startZK();
+	            if (args[0].equals("0")) executeServer("rep0", confServer0);
+	            if (args[0].equals("1")) executeServer("rep1", confServer1);
+	            if (args[0].equals("2")) executeServer("rep2", confServer2);
+	            if (args[0].equals("c")) executeClient("client", confClient);
+            }
+            else{            
+            	startZK();
+
+	            executeServer("leader", confServer0);
+	            Thread.sleep(1000);
+	            executeServer("replica1", confServer1);
+	            Thread.sleep(1000);
+	            executeServer("replica2", confServer2);
+	
+	            Thread.sleep(7000);
+	
+	            executeClient("client", confClient);
+            }
         }
     }
     private static void startZK() throws IOException {
