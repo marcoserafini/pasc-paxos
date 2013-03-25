@@ -75,9 +75,9 @@ public class PaxosEnsemble {
         String confServer1 = "-i 1 -p 20748 -r " + confServerCommon;
         String confServer2 = "-i 2 -p 20778 " + confServerCommon;
 
-        String confClient = "-i 0 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -c 1 -r 10  -w 1000000" + useAnm;
-//        String confClient2 = "-i 1 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -p 9001 -c 3 " + useAnm;
-//        String confClient3 = "-i 2 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -p 9002 -c 3 " + useAnm;
+        String confClient = "-i 0 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -c 3 -r 10  -w 10000" + useAnm;
+        String confClient2 = "-i 1 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -c 3 -r 10 -w 10000" + useAnm;
+        String confClient3 = "-i 2 -l 127.0.0.1:20548,127.0.0.1:20748,127.0.0.1:20778, -s 3 -c 3 -r 10 -w 10000" + useAnm;
         
         if (args.length == 0) {
             
@@ -92,8 +92,8 @@ public class PaxosEnsemble {
             Thread.sleep(7000);
 
             executeClient("client", confClient);
-//        executeClient("client2", confClient2);
-//        executeClient("client3", confClient3);
+        executeClient("client2", confClient2);
+        executeClient("client3", confClient3);
         } else {
             HashSet<String> params = new HashSet<String>();
             

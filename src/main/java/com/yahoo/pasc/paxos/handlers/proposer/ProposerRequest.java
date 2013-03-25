@@ -90,10 +90,13 @@ public class ProposerRequest extends PaxosHandler<Request> {
                                 + "FirstDigestID: {} CurrentId: {} RequestId: {} FirstIid: {} MsgClient: {} MsgTS: {} CacheTS: {} ",
                         new Object[] { state.getFirstDigestId(), state.getCurrIid(), request.getIid(),
                                 state.getFirstInstanceId(), clientId, timestamp, repTs });
-
-                return state.getIsLeader() && state.getCompletedPhaseOne() ?
-                        Arrays.<PaxosDescriptor> asList(new Accept.Descriptor(requestIid), new Accepted.Descriptor(requestIid)) :
-                        null;
+                if(state.getIsLeader() && state.getCompletedPhaseOne() ){
+                	ArrayList<PaxosDescriptor> desc = new ArrayList<PaxosDescriptor> (2);
+                	desc.add(new Accept.Descriptor(requestIid));
+                	desc.add(new Accepted.Descriptor(requestIid));
+                	return desc;
+                }
+                return null;
             }
         }
 
