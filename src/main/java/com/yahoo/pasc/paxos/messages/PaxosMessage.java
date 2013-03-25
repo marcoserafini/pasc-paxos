@@ -24,12 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.yahoo.aasc.ReadOnly;
+import com.yahoo.aasc.HandlerIO;
 import com.yahoo.pasc.Message;
 import com.yahoo.pasc.paxos.messages.serialization.BufferPool;
 import com.yahoo.pasc.paxos.messages.serialization.CRC32Pool;
 import com.yahoo.pasc.paxos.messages.serialization.ManualEncoder;
 
-public abstract class PaxosMessage extends Message implements Serializable {
+public abstract class PaxosMessage extends Message implements Serializable, HandlerIO {
     @ReadOnly 
     private static final Logger LOG = LoggerFactory.getLogger(PaxosMessage.class);
 
@@ -107,5 +108,17 @@ public abstract class PaxosMessage extends Message implements Serializable {
     @Override
     public String toString() {
         return "< PM with crc field:" + crc + " >"; 
+    }
+    
+    public void addCode(Object replica){
+    	storeReplica((Message) replica);
+    }
+    
+    public boolean validateCode(){
+    	return verify();
+    }
+    
+    public Object returnCode(){
+    	return getCRC();
     }
 }
