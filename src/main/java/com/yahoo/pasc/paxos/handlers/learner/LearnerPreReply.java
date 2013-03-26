@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.aasc.Introspect;
 import com.yahoo.aasc.MessageHandler;
 import com.yahoo.aasc.ReadOnly;
+import com.yahoo.aasc.ReadOnlyArgs;
 import com.yahoo.pasc.paxos.handlers.DigestHandler;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.messages.Digest;
@@ -46,6 +47,7 @@ public class LearnerPreReply extends PaxosHandler<PreReply> {
 
     @Override
     @MessageHandler
+    @ReadOnlyArgs
     public List<PaxosDescriptor> processMessage(PreReply message) {
         int clientId = message.getClientId();
         long timestamp = message.getTimestamp();

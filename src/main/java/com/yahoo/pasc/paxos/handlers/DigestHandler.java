@@ -29,6 +29,7 @@ import com.yahoo.pasc.paxos.state.PaxosState;
 import com.yahoo.aasc.Introspect;
 import com.yahoo.aasc.MessageHandler;
 import com.yahoo.aasc.ReadOnly;
+import com.yahoo.aasc.ReadOnlyArgs;
 
 @Introspect
 public class DigestHandler extends PaxosHandler<Digest> {
@@ -42,6 +43,7 @@ public class DigestHandler extends PaxosHandler<Digest> {
 
     @Override
     @MessageHandler
+    @ReadOnlyArgs
     public List<PaxosDescriptor> processMessage(Digest digest) {
         storeDigest(digest.getSenderId(), digest.getDigestId(), digest.getDigest(), state);
         return null;

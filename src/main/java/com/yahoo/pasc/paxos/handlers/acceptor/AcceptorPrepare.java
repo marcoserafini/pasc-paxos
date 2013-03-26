@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.aasc.Introspect;
 import com.yahoo.aasc.MessageHandler;
 import com.yahoo.aasc.ReadOnly;
+import com.yahoo.aasc.ReadOnlyArgs;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.messages.PaxosDescriptor;
 import com.yahoo.pasc.paxos.messages.Prepare;
@@ -47,6 +48,7 @@ public class AcceptorPrepare extends PaxosHandler<Prepare> {
 
     @Override
     @MessageHandler
+    @ReadOnlyArgs
     public List<PaxosDescriptor> processMessage(Prepare message) {
 
         // check that the leader is newer than the last one by looking at the ballot number

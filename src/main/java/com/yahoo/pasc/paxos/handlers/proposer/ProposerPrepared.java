@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.aasc.Introspect;
 import com.yahoo.aasc.MessageHandler;
 import com.yahoo.aasc.ReadOnly;
+import com.yahoo.aasc.ReadOnlyArgs;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.messages.Accept;
 import com.yahoo.pasc.paxos.messages.Accepted;
@@ -51,6 +52,7 @@ public class ProposerPrepared extends PaxosHandler<Prepared> {
     
     @Override
     @MessageHandler
+    @ReadOnlyArgs
     public List<PaxosDescriptor> processMessage(Prepared receivedMessage) {
 
         if (!state.getIsLeader() || state.getBallotProposer() != receivedMessage.getReplyBallot()) {

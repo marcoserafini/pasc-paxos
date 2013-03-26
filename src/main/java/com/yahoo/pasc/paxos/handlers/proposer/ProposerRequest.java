@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.aasc.Introspect;
 import com.yahoo.aasc.MessageHandler;
 import com.yahoo.aasc.ReadOnly;
+import com.yahoo.aasc.ReadOnlyArgs;
 import com.yahoo.pasc.paxos.handlers.PaxosHandler;
 import com.yahoo.pasc.paxos.handlers.acceptor.AcceptorAccept;
 import com.yahoo.pasc.paxos.messages.Accept;
@@ -52,6 +53,7 @@ public class ProposerRequest extends PaxosHandler<Request> {
 
     @Override
     @MessageHandler
+    @ReadOnlyArgs
     public List<PaxosDescriptor> processMessage(Request message) {
         long firstInstanceId = state.getFirstInstanceId();
         int maxInstances = state.getMaxInstances();
